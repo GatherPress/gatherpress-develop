@@ -173,6 +173,8 @@ class Cli extends WP_CLI {
 
 			if ( file_put_contents( $package_file, $new_contents ) !== false ) {
 				WP_CLI::success( "Updated package.json version to $version." );
+				shell_exec( 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash' );
+				shell_exec( 'nvm use' );
 				shell_exec( 'npm i --package-lock-only' );
 			} else {
 				WP_CLI::error( "Failed to update the package.json file." );
