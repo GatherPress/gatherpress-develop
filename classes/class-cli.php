@@ -142,6 +142,8 @@ class Cli extends WP_CLI {
 			WP_CLI::error( "Version header not found in the readme file." );
 		}
 
+		$file_contents = file_get_contents( $readme_file );
+
 		// readme contributors
 		if ( preg_match( '/(^Contributors:\s*)([^\r\n]*)($)/mi', $file_contents, $matches ) ) {
 			$new_contents = preg_replace( '/(^Contributors:\s*)([^\r\n]*)($)/mi', '${1}' . $contributors . '${3}', $file_contents );
