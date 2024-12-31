@@ -15,10 +15,15 @@
 defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
 
 return array(
-	'0.31.0-alpha' => array(
+	'0.32.0-alpha.1' => array(
 		'project-leaders' => array( 'mauteri', 'hrmervin', 'patricia70', 'carstenbach' ),
-		'gatherpress-team' => array( 'jmarx75', 'stephenerdelyi', 'calebthedev', 'prayagm', 'pbrocks', 'linusx007' ),
-		'contributors' => array( 'hauvong', 'phoopee3', 'cameronbarrett', 'courane01', 'newyorkerlaura', 'jeffpaul', 'deshabhishek007', 'michelleames', 'prashantabellad', 'javiercasares', 'meaganhanes', 'nilovelez', 'swissspidy', 'malgra' ),
+		'gatherpress-team' => array( 'jmarx75', 'stephenerdelyi', 'calebthedev', 'pbrocks', 'newyorkerlaura' ),
+		'contributors' => array( 'hauvong', 'phoopee3', 'cameronbarrett', 'courane01', 'jeffpaul', 'deshabhishek007', 'michelleames', 'prayagm', 'prashantabellad', 'javiercasares', 'meaganhanes', 'nilovelez', 'swissspidy', 'linusx007', 'malgra', 'mattgaldino', 'jordanpak', 'ajskelton' ),
+	),
+	'0.31.0' => array(
+		'project-leaders' => array( 'mauteri', 'hrmervin', 'patricia70', 'carstenbach' ),
+		'gatherpress-team' => array( 'jmarx75', 'stephenerdelyi', 'calebthedev', 'pbrocks' ),
+		'contributors' => array( 'hauvong', 'phoopee3', 'cameronbarrett', 'courane01', 'newyorkerlaura', 'jeffpaul', 'deshabhishek007', 'michelleames', 'prayagm', 'prashantabellad', 'javiercasares', 'meaganhanes', 'nilovelez', 'swissspidy', 'linusx007', 'malgra', 'mattgaldino', 'jordanpak', 'ajskelton' ),
 	),
 	'0.30.0' => array(
 		'project-leaders' => array( 'mauteri', 'hrmervin', 'patricia70', 'carstenbach' ),
