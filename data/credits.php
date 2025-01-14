@@ -15,6 +15,11 @@
 defined( 'ABSPATH' ) || exit; // @codeCoverageIgnore
 
 return array(
+	'0.32.0-alpha.2' => array(
+		'project-leaders' => array( 'mauteri', 'hrmervin', 'patricia70', 'carstenbach' ),
+		'gatherpress-team' => array( 'jmarx75', 'stephenerdelyi', 'calebthedev', 'pbrocks', 'newyorkerlaura', 'prayagm', 'prashantabellad' ),
+		'contributors' => array( 'hauvong', 'phoopee3', 'cameronbarrett', 'courane01', 'jeffpaul', 'deshabhishek007', 'michelleames', 'javiercasares', 'meaganhanes', 'nilovelez', 'swissspidy', 'linusx007', 'malgra', 'mattgaldino', 'jordanpak', 'ajskelton' ),
+	),
 	'0.32.0-alpha.1' => array(
 		'project-leaders' => array( 'mauteri', 'hrmervin', 'patricia70', 'carstenbach' ),
 		'gatherpress-team' => array( 'jmarx75', 'stephenerdelyi', 'calebthedev', 'pbrocks', 'newyorkerlaura' ),
