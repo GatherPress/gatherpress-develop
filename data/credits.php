@@ -20,6 +20,11 @@ return array(
 		'gatherpress-team' => array( 'hrmervin', 'jmarx75', 'stephenerdelyi', 'carstenbach', 'newyorkerlaura', 'prayagm', 'prashantabellad' ),
 		'contributors' => array( 'calebthedev', 'pbrocks', 'hauvong', 'phoopee3', 'cameronbarrett', 'courane01', 'jeffpaul', 'deshabhishek007', 'michelleames', 'javiercasares', 'meaganhanes', 'nilovelez', 'swissspidy', 'linusx007', 'malgra', 'mattgaldino', 'jordanpak', 'ajskelton' ),
 	),
+	'0.32.2' => array(
+		'project-leaders' => array( 'mauteri', 'hrmervin', 'patricia70' ),
+		'gatherpress-team' => array( 'jmarx75', 'stephenerdelyi', 'carstenbach', 'calebthedev', 'pbrocks', 'newyorkerlaura', 'prayagm', 'prashantabellad' ),
+		'contributors' => array( 'hauvong', 'phoopee3', 'cameronbarrett', 'courane01', 'jeffpaul', 'deshabhishek007', 'michelleames', 'javiercasares', 'meaganhanes', 'nilovelez', 'swissspidy', 'linusx007', 'malgra', 'mattgaldino', 'jordanpak', 'ajskelton' ),
+	),
 	'0.32.1' => array(
 		'project-leaders' => array( 'mauteri', 'hrmervin', 'patricia70' ),
 		'gatherpress-team' => array( 'jmarx75', 'stephenerdelyi', 'carstenbach', 'calebthedev', 'pbrocks', 'newyorkerlaura', 'prayagm', 'prashantabellad' ),
