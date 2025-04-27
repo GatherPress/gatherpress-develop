@@ -18,7 +18,7 @@ return array(
 	'0.33.0-alpha.1' => array(
 		'project-leaders' => array( 'mauteri', 'patricia70' ),
 		'gatherpress-team' => array( 'hrmervin', 'jmarx75', 'stephenerdelyi', 'carstenbach', 'newyorkerlaura', 'prayagm', 'prashantabellad' ),
-		'contributors' => array( 'calebthedev', 'pbrocks', 'hauvong', 'phoopee3', 'cameronbarrett', 'courane01', 'jeffpaul', 'deshabhishek007', 'michelleames', 'javiercasares', 'meaganhanes', 'nilovelez', 'swissspidy', 'linusx007', 'malgra', 'mattgaldino', 'jordanpak', 'ajskelton' ),
+		'contributors' => array( 'calebthedev', 'pbrocks', 'hauvong', 'phoopee3', 'cameronbarrett', 'courane01', 'jeffpaul', 'deshabhishek007', 'michelleames', 'javiercasares', 'meaganhanes', 'nilovelez', 'swissspidy', 'linusx007', 'malgra', 'mattgaldino', 'jordanpak', 'ajskelton', 'apermo' ),
 	),
 	'0.32.2' => array(
 		'project-leaders' => array( 'mauteri', 'hrmervin', 'patricia70' ),
