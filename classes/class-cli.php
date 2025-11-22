@@ -69,9 +69,9 @@ class Cli extends WP_CLI {
 		foreach ( $credits[ $version ] as $group => $users ) {
 			if ( 'contributors' === $group ) {
 				sort( $users );
-			} else {
-				$contributors = array_merge( $contributors, $users );
 			}
+
+			$contributors = array_merge( $contributors, $users );
 
 			$data[ $group ] = array();
 
