@@ -18,7 +18,7 @@ return array(
 	'0.33.0-alpha.2' => array(
 		'project-leaders' => array( 'mauteri', 'patricia70' ),
 		'gatherpress-team' => array( 'hrmervin', 'jmarx75', 'stephenerdelyi', 'carstenbach', 'jordanpak' ),
-		'contributors' => array( 'apermo', 'passoniate', 'dd32' ),
+		'contributors' => array( 'apermo', 'passoniate', 'dd32', 'pbrocks' ),
 	),
 	'0.32.3' => array(
 		'project-leaders' => array( 'mauteri', 'hrmervin', 'patricia70' ),
