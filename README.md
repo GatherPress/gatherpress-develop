@@ -82,9 +82,9 @@ GatherPress follows semantic versioning with pre-release stages:
    ```bash
    git checkout main
    git pull origin main
-   git checkout -b merge-0.34.1
+   git checkout -b merge-0.34.0
    git checkout develop
-   git merge merge-0.34.1
+   git merge merge-0.34.0
    ```
 
 8. **Resolve conflicts**: Run the develop CLI to update version numbers and resolve any conflicts between `main` and `develop`
