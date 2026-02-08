@@ -18,7 +18,12 @@ return array(
 	'0.34.0-alpha.1' => array(
 		'project-leaders' => array( 'mauteri', 'patricia70' ),
 		'gatherpress-team' => array( 'hrmervin', 'jmarx75', 'stephenerdelyi', 'carstenbach', 'jordanpak', 'mahimadave', 'tusharaddweb', 'pkbhatt' ),
-		'contributors' => array(),
+		'contributors' => array( 'kofimokome' ),
+	),
+	'0.33.1' => array(
+		'project-leaders' => array( 'mauteri', 'patricia70' ),
+		'gatherpress-team' => array( 'hrmervin', 'jmarx75', 'stephenerdelyi', 'carstenbach', 'jordanpak', 'mahimadave', 'tusharaddweb', 'pkbhatt' ),
+		'contributors' => array( 'apermo', 'passoniate', 'dd32', 'pbrocks', 'andremenrath' ),
 	),
 	'0.33.0' => array(
 		'project-leaders' => array( 'mauteri', 'patricia70' ),
