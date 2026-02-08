@@ -1,4 +1,4 @@
-# gatherpress-develop
+# Gatherpress Develop
 
 This plugin manages versioning, credits, and deployment tooling for the GatherPress project.
 
