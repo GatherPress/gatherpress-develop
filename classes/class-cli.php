@@ -117,45 +117,9 @@ class Cli extends WP_CLI {
 			WP_CLI::error( "Version header not found in the plugin file." );
 		}
 
-		// Update readme.me
-		$readme_file  = GATHERPRESS_CORE_PATH . '/readme.md';
+		// Generate README.md and readme.txt from parts.
 		$contributors = implode( ', ', $contributors );
-
-		if ( ! file_exists( $readme_file ) ) {
-			WP_CLI::error( "The readme file does not exist." );
-
-			return;
-		}
-
-		$file_contents = file_get_contents( $readme_file );
-
-		// readme version
-		if ( preg_match( '/^(Stable tag:\s*)([\w\.-]+)(\s*)$/mi', $file_contents, $matches ) ) {
-			$new_contents = preg_replace( '/^(Stable tag:\s*)([\w\.-]+)(\s*)$/mi', '${1}' . $version . '${3}', $file_contents );
-
-			if ( file_put_contents( $readme_file, $new_contents ) !== false ) {
-				WP_CLI::success( "Updated readme version to $version." );
-			} else {
-				WP_CLI::error( "Failed to update the readme file." );
-			}
-		} else {
-			WP_CLI::error( "Version header not found in the readme file." );
-		}
-
-		$file_contents = file_get_contents( $readme_file );
-
-		// readme contributors
-		if ( preg_match( '/(^Contributors:\s*)([^\r\n]*)($)/mi', $file_contents, $matches ) ) {
-			$new_contents = preg_replace( '/(^Contributors:\s*)([^\r\n]*)($)/mi', '${1}' . $contributors . '${3}', $file_contents );
-
-			if ( file_put_contents( $readme_file, $new_contents ) !== false ) {
-				WP_CLI::success( "Updated readme contributors." );
-			} else {
-				WP_CLI::error( "Failed to update the readme file." );
-			}
-		} else {
-			WP_CLI::error( "Version header not found in the readme file." );
-		}
+		$this->generate_readmes( $version, $contributors );
 
 		// Update package.json
 		chdir( GATHERPRESS_CORE_PATH );
@@ -184,5 +148,184 @@ class Cli extends WP_CLI {
 		} else {
 			WP_CLI::error( "Version not found in the package.json file." );
 		}
+	}
+
+	/**
+	 * Generate README.md and readme.txt from parts.
+	 *
+	 * Assembles both readme files from template parts stored in gatherpress-develop/parts/.
+	 * README.md is GitHub-focused, readme.txt is WordPress.org-focused.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $version      The plugin version.
+	 * @param string $contributors Comma-separated list of contributor usernames.
+	 * @return void
+	 */
+	private function generate_readmes( string $version, string $contributors ): void {
+		$tested_up_to = $this->get_tested_up_to();
+
+		// Generate README.md for GitHub.
+		$readme_md = $this->build_github_readme( $version, $contributors, $tested_up_to );
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+		if ( file_put_contents( GATHERPRESS_CORE_PATH . '/README.md', $readme_md ) !== false ) {
+			WP_CLI::success( 'Generated README.md.' );
+		} else {
+			WP_CLI::error( 'Failed to generate README.md.' );
+		}
+
+		// Generate readme.txt for WordPress.org.
+		$readme_txt = $this->build_wporg_readme( $version, $contributors, $tested_up_to );
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+		if ( file_put_contents( GATHERPRESS_CORE_PATH . '/readme.txt', $readme_txt ) !== false ) {
+			WP_CLI::success( 'Generated readme.txt.' );
+		} else {
+			WP_CLI::error( 'Failed to generate readme.txt.' );
+		}
+	}
+
+	/**
+	 * Build the GitHub README.md content from parts.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $version      The plugin version.
+	 * @param string $contributors Comma-separated list of contributor usernames.
+	 * @param string $tested_up_to The WordPress version tested up to.
+	 * @return string The assembled README.md content.
+	 */
+	private function build_github_readme( string $version, string $contributors, string $tested_up_to ): string {
+		$output  = "# GatherPress\n\n";
+		$output .= "<!-- markdownlint-disable-next-line MD045 -->\n";
+		$output .= "![](.wordpress-org/banner-1544x500.jpg)\n\n";
+		$output .= '**' . trim( $this->read_part( 'shared/description.md' ) ) . "**\n\n";
+		$version_encoded = rawurlencode( $version );
+		$output         .= "[![Try it in WordPress Playground](https://img.shields.io/badge/Try_it-in_WordPress_Playground-blue?logo=wordpress&logoColor=%23fff&labelColor=%233858e9&color=%233858e9)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/GatherPress/gatherpress/main/.wordpress-org/blueprints/blueprint.json) ![Version](https://img.shields.io/static/v1?label=version&message={$version_encoded}&color=blue)\n\n";
+		$output       .= $this->read_part( 'github/badges.md' ) . "\n";
+		$output .= "## Screenshots\n\n";
+		$output .= $this->build_github_screenshots() . "\n";
+		$output .= "## Features\n\n";
+		$output .= $this->read_part( 'shared/features.md' ) . "\n";
+		$output .= "## Getting Started\n\n";
+		$output .= $this->read_part( 'github/quick-start.md' ) . "\n";
+		$output .= "## Get Involved\n\n";
+		$output .= $this->read_part( 'github/get-involved.md' ) . "\n";
+		$output .= "## Third-Party Libraries\n\n";
+		$output .= $this->read_part( 'shared/third-party-libraries.md' ) . "\n";
+		$output .= "## More Information\n\n";
+		$output .= $this->read_part( 'github/more-info.md' ) . "\n";
+		$output .= "---\n\n";
+		$output .= $this->read_part( 'github/footer.md' );
+
+		return $output;
+	}
+
+	/**
+	 * Build the WordPress.org readme.txt content from parts.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $version      The plugin version.
+	 * @param string $contributors Comma-separated list of contributor usernames.
+	 * @param string $tested_up_to The WordPress version tested up to.
+	 * @return string The assembled readme.txt content.
+	 */
+	private function build_wporg_readme( string $version, string $contributors, string $tested_up_to ): string {
+		$output  = "=== GatherPress ===\n";
+		$output .= "Contributors: {$contributors}\n";
+		$output .= "Tags: events, event, meetup, community\n";
+		$output .= "Tested up to: {$tested_up_to}\n";
+		$output .= "Stable tag: {$version}\n";
+		$output .= "License: GPL v2 or later\n";
+		$output .= "License URI: https://www.gnu.org/licenses/gpl-2.0.html\n\n";
+		$output .= trim( $this->read_part( 'shared/description.md' ) ) . "\n\n";
+		$output .= "== Description ==\n\n";
+		$output .= $this->read_part( 'shared/features.md' ) . "\n";
+		$output .= "== Installation ==\n\n";
+		$output .= $this->read_part( 'shared/installation.md' ) . "\n";
+		$output .= "== Screenshots ==\n\n";
+		$output .= $this->read_part( 'shared/screenshots.md' ) . "\n";
+		$output .= "== Changelog ==\n\n";
+		$output .= "For the full changelog, visit the [GitHub releases page](https://github.com/GatherPress/gatherpress/releases).\n\n";
+		$output .= "== Frequently Asked Questions ==\n\n";
+		$output .= "Visit our [FAQ page](https://github.com/GatherPress/gatherpress/blob/main/docs/faq.md) for answers to common questions.\n";
+
+		return $output;
+	}
+
+	/**
+	 * Build GitHub screenshot markdown with image references.
+	 *
+	 * Reads shared screenshot descriptions and adds image markdown for GitHub rendering.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The screenshot section with images.
+	 */
+	private function build_github_screenshots(): string {
+		$screenshots = $this->read_part( 'shared/screenshots.md' );
+		$image_map   = array(
+			1 => '.wordpress-org/screenshot-1.png',
+			2 => '.wordpress-org/screenshot-2.png',
+			3 => '.wordpress-org/screenshot-5.png',
+		);
+
+		$output = '';
+		$lines  = explode( "\n", trim( $screenshots ) );
+
+		foreach ( $lines as $line ) {
+			if ( preg_match( '/^(\d+)\.\s+(.+)$/', $line, $matches ) ) {
+				$num         = (int) $matches[1];
+				$description = $matches[2];
+				$output     .= "{$num}. {$description}\n";
+
+				if ( isset( $image_map[ $num ] ) ) {
+					$output .= "   ![screenshot-{$num}]({$image_map[ $num ]})\n";
+				}
+			}
+		}
+
+		return $output;
+	}
+
+	/**
+	 * Read the current "Tested up to" value from readme.txt.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string The tested up to WordPress version.
+	 */
+	private function get_tested_up_to(): string {
+		$readme_file = GATHERPRESS_CORE_PATH . '/readme.txt';
+
+		if ( file_exists( $readme_file ) ) {
+			$contents = file_get_contents( $readme_file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_get_contents
+
+			if ( preg_match( '/^Tested up to:\s*([\w\.-]+)\s*$/mi', $contents, $matches ) ) {
+				return $matches[1];
+			}
+		}
+
+		return '6.9';
+	}
+
+	/**
+	 * Read a template part file.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $relative_path Path relative to the parts directory.
+	 * @return string The file contents.
+	 */
+	private function read_part( string $relative_path ): string {
+		$file = GATHERPRESS_DEVELOP_CORE_PATH . '/parts/' . $relative_path;
+
+		if ( ! file_exists( $file ) ) {
+			WP_CLI::error( "Part file not found: {$relative_path}" );
+		}
+
+		return file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_get_contents
 	}
 }
