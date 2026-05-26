@@ -71,7 +71,15 @@ class Cli extends WP_CLI {
 				sort( $users );
 			}
 
-			$contributors = array_merge( $contributors, $users );
+			// Only leads + team land in the wp.org plugin header's
+			// `Contributors:` line. The contributors group still appears on
+			// the credits page (via $data below), but it gets churn-y as more
+			// people land single-PR contributions, and wp.org's plugin
+			// directory lists those as "Contributors" with a level of billing
+			// that doesn't match the actual involvement.
+			if ( 'contributors' !== $group ) {
+				$contributors = array_merge( $contributors, $users );
+			}
 
 			$data[ $group ] = array();
 
@@ -121,9 +129,7 @@ class Cli extends WP_CLI {
 		$contributors = implode( ', ', $contributors );
 		$this->generate_readmes( $version, $contributors );
 
-		// Update package.json
-		chdir( GATHERPRESS_CORE_PATH );
-
+		// Update package.json.
 		$package_file = GATHERPRESS_CORE_PATH . '/package.json';
 
 		if ( ! file_exists( $package_file ) ) {
@@ -139,9 +145,20 @@ class Cli extends WP_CLI {
 
 			if ( file_put_contents( $package_file, $new_contents ) !== false ) {
 				WP_CLI::success( "Updated package.json version to $version." );
-				shell_exec( 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash' );
-				shell_exec( 'nvm use' );
-				shell_exec( 'npm i --package-lock-only' );
+
+				// Refresh `package-lock.json` is intentionally NOT run here.
+				// Previous versions tried to install nvm + run `nvm use` +
+				// `npm i --package-lock-only` via shell_exec, but inside the
+				// lando container there's no Node toolchain and `nvm` is a
+				// bash function that shell_exec can't source. Reminder the
+				// developer to do it on the host where their nvm + Node are
+				// actually installed.
+				WP_CLI::log( '' );
+				WP_CLI::log( 'Next step (run on your host, not inside lando — lando containers have no Node):' );
+				WP_CLI::log( '  cd <your gatherpress checkout>' );
+				WP_CLI::log( '  nvm use && npm i --package-lock-only' );
+				WP_CLI::log( '' );
+				WP_CLI::log( 'That refreshes package-lock.json to match the new package.json version.' );
 			} else {
 				WP_CLI::error( "Failed to update the package.json file." );
 			}
@@ -214,6 +231,8 @@ class Cli extends WP_CLI {
 		$output .= $this->read_part( 'github/get-involved.md' ) . "\n";
 		$output .= "## Third-Party Libraries\n\n";
 		$output .= $this->read_part( 'shared/third-party-libraries.md' ) . "\n";
+		$output .= "## External Services\n\n";
+		$output .= $this->read_part( 'github/external-services.md' ) . "\n";
 		$output .= "## More Information\n\n";
 		$output .= $this->read_part( 'github/more-info.md' ) . "\n";
 		$output .= "---\n\n";
@@ -250,7 +269,9 @@ class Cli extends WP_CLI {
 		$output .= "== Changelog ==\n\n";
 		$output .= "For the full changelog, visit the [GitHub releases page](https://github.com/GatherPress/gatherpress/releases).\n\n";
 		$output .= "== Frequently Asked Questions ==\n\n";
-		$output .= "Visit our [FAQ page](https://github.com/GatherPress/gatherpress/blob/main/docs/faq.md) for answers to common questions.\n";
+		$output .= "Visit our [FAQ page](https://github.com/GatherPress/gatherpress/blob/main/docs/faq.md) for answers to common questions.\n\n";
+		$output .= "== External Services ==\n\n";
+		$output .= $this->read_part( 'wporg/external-services.md' );
 
 		return $output;
 	}
