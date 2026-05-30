@@ -167,9 +167,9 @@ class Cli extends WP_CLI {
 		}
 
 		// Sync GatherPress Alpha to the same version (lockstep companion) and
-		// refresh the Supported Versions table in both SECURITY.md files.
+		// regenerate SECURITY.md (core + alpha) from the shared template.
 		$this->update_alpha_version( $version );
-		$this->update_security_versions( $version );
+		$this->generate_security( $version );
 	}
 
 	/**
@@ -211,18 +211,19 @@ class Cli extends WP_CLI {
 	}
 
 	/**
-	 * Refresh the Supported Versions table in SECURITY.md for core and alpha.
+	 * Generate SECURITY.md for core and alpha from the shared template.
 	 *
-	 * Sets the supported row to the current major.minor (e.g. "0.34.x") and the
-	 * unsupported row to "< {major.minor}" (e.g. "< 0.34"), deriving major.minor
-	 * from the full version with any -alpha/-beta/-rc suffix stripped.
+	 * Reads parts/shared/security.md and injects the Supported Versions table
+	 * for the current major.minor (e.g. "0.34.x" supported, "< 0.34" not). The
+	 * major.minor is derived from the full version with any -alpha/-beta/-rc
+	 * suffix stripped. Written to core and the sibling alpha plugin.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param string $version The full plugin version (e.g. "0.34.0-beta.1").
 	 * @return void
 	 */
-	private function update_security_versions( string $version ): void {
+	private function generate_security( string $version ): void {
 		if ( ! preg_match( '/^(\d+\.\d+)/', $version, $matches ) ) {
 			WP_CLI::error( "Could not derive major.minor from version: $version" );
 
@@ -230,30 +231,30 @@ class Cli extends WP_CLI {
 		}
 
 		$major_minor = $matches[1];
-		$files       = array(
+
+		$table  = "| Version | Supported          |\n";
+		$table .= "| ------- | ------------------ |\n";
+		$table .= "| {$major_minor}.x  | :white_check_mark: |\n";
+		$table .= "| < {$major_minor}  | :x:                |";
+
+		$content = str_replace( '{{SUPPORTED_VERSIONS_TABLE}}', $table, $this->read_part( 'shared/security.md' ) );
+
+		$targets = array(
 			'core'  => GATHERPRESS_CORE_PATH . '/SECURITY.md',
 			'alpha' => dirname( GATHERPRESS_CORE_PATH ) . '/gatherpress-alpha/SECURITY.md',
 		);
 
-		foreach ( $files as $label => $file ) {
-			if ( ! file_exists( $file ) ) {
-				WP_CLI::warning( "SECURITY.md for $label not found ($file); skipping." );
+		foreach ( $targets as $label => $file ) {
+			if ( ! is_dir( dirname( $file ) ) ) {
+				WP_CLI::warning( "$label plugin directory not found; skipping its SECURITY.md." );
 
 				continue;
 			}
 
-			$contents = file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_get_contents
-
-			// Supported row, e.g. "| 0.34.x | :white_check_mark: |".
-			$contents = preg_replace( '/(\|\s*)\d+\.\d+(\.x\s*\|\s*:white_check_mark:)/', '${1}' . $major_minor . '${2}', $contents );
-
-			// Unsupported row, e.g. "| < 0.34 | :x: |".
-			$contents = preg_replace( '/(\|\s*<\s*)\d+\.\d+(\s*\|\s*:x:)/', '${1}' . $major_minor . '${2}', $contents );
-
-			if ( file_put_contents( $file, $contents ) !== false ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-				WP_CLI::success( "Updated SECURITY.md ($label) to {$major_minor}.x supported / < {$major_minor} unsupported." );
+			if ( file_put_contents( $file, $content ) !== false ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+				WP_CLI::success( "Generated SECURITY.md ($label) — supported {$major_minor}.x / < {$major_minor}." );
 			} else {
-				WP_CLI::error( "Failed to update SECURITY.md ($label)." );
+				WP_CLI::error( "Failed to write SECURITY.md ($label)." );
 			}
 		}
 	}
