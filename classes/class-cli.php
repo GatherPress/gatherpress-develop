@@ -165,6 +165,97 @@ class Cli extends WP_CLI {
 		} else {
 			WP_CLI::error( "Version not found in the package.json file." );
 		}
+
+		// Sync GatherPress Alpha to the same version (lockstep companion) and
+		// refresh the Supported Versions table in both SECURITY.md files.
+		$this->update_alpha_version( $version );
+		$this->update_security_versions( $version );
+	}
+
+	/**
+	 * Sync the GatherPress Alpha plugin's version header to match core.
+	 *
+	 * GatherPress Alpha tracks the core plugin version in lockstep. It lives in
+	 * a sibling plugin directory next to core (../gatherpress-alpha), so the
+	 * path is derived from GATHERPRESS_CORE_PATH's parent.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $version The full plugin version to set (e.g. "0.34.0-beta.1").
+	 * @return void
+	 */
+	private function update_alpha_version( string $version ): void {
+		$alpha_file = dirname( GATHERPRESS_CORE_PATH ) . '/gatherpress-alpha/gatherpress-alpha.php';
+
+		if ( ! file_exists( $alpha_file ) ) {
+			WP_CLI::warning( 'GatherPress Alpha plugin not found alongside core; skipping alpha version sync.' );
+
+			return;
+		}
+
+		$file_contents = file_get_contents( $alpha_file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_get_contents
+
+		if ( ! preg_match( '/^(\s*\*\s*Version:\s*)([\w\.-]+)(\s*)$/mi', $file_contents ) ) {
+			WP_CLI::error( 'Version header not found in the GatherPress Alpha plugin file.' );
+
+			return;
+		}
+
+		$new_contents = preg_replace( '/^(\s*\*\s*Version:\s*)([\w\.-]+)(\s*)$/mi', '${1}' . $version . '${3}', $file_contents );
+
+		if ( file_put_contents( $alpha_file, $new_contents ) !== false ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+			WP_CLI::success( "Updated GatherPress Alpha version to $version." );
+		} else {
+			WP_CLI::error( 'Failed to update the GatherPress Alpha plugin file.' );
+		}
+	}
+
+	/**
+	 * Refresh the Supported Versions table in SECURITY.md for core and alpha.
+	 *
+	 * Sets the supported row to the current major.minor (e.g. "0.34.x") and the
+	 * unsupported row to "< {major.minor}" (e.g. "< 0.34"), deriving major.minor
+	 * from the full version with any -alpha/-beta/-rc suffix stripped.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $version The full plugin version (e.g. "0.34.0-beta.1").
+	 * @return void
+	 */
+	private function update_security_versions( string $version ): void {
+		if ( ! preg_match( '/^(\d+\.\d+)/', $version, $matches ) ) {
+			WP_CLI::error( "Could not derive major.minor from version: $version" );
+
+			return;
+		}
+
+		$major_minor = $matches[1];
+		$files       = array(
+			'core'  => GATHERPRESS_CORE_PATH . '/SECURITY.md',
+			'alpha' => dirname( GATHERPRESS_CORE_PATH ) . '/gatherpress-alpha/SECURITY.md',
+		);
+
+		foreach ( $files as $label => $file ) {
+			if ( ! file_exists( $file ) ) {
+				WP_CLI::warning( "SECURITY.md for $label not found ($file); skipping." );
+
+				continue;
+			}
+
+			$contents = file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_get_contents
+
+			// Supported row, e.g. "| 0.34.x | :white_check_mark: |".
+			$contents = preg_replace( '/(\|\s*)\d+\.\d+(\.x\s*\|\s*:white_check_mark:)/', '${1}' . $major_minor . '${2}', $contents );
+
+			// Unsupported row, e.g. "| < 0.34 | :x: |".
+			$contents = preg_replace( '/(\|\s*<\s*)\d+\.\d+(\s*\|\s*:x:)/', '${1}' . $major_minor . '${2}', $contents );
+
+			if ( file_put_contents( $file, $contents ) !== false ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+				WP_CLI::success( "Updated SECURITY.md ($label) to {$major_minor}.x supported / < {$major_minor} unsupported." );
+			} else {
+				WP_CLI::error( "Failed to update SECURITY.md ($label)." );
+			}
+		}
 	}
 
 	/**
