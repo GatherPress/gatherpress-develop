@@ -1,16 +1,5 @@
 # Security Policy
 
-## Supported Versions
-
-We release patches for security vulnerabilities only for the current version:
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.33.x  | :white_check_mark: |
-| < 0.33  | :x:                |
-
-**We strongly recommend always using the latest stable version of GatherPress.** Security updates are only provided for the current release.
-
 ## Reporting a Vulnerability
 
 **Please do not report security vulnerabilities through public GitHub issues.**
