@@ -18,7 +18,7 @@ return array(
 	'0.34.0-beta.1' => array(
 		'project-leaders' => array( 'mauteri', 'patricia70' ),
 		'gatherpress-team' => array( 'hrmervin', 'jmarx75', 'stephenerdelyi', 'carstenbach', 'jordanpak', 'mahimadave', 'tusharaddweb', 'pkbhatt' ),
-		'contributors' => array( 'kofimokome', 'richsalvucci', 'dd32' ),
+		'contributors' => array( 'kofimokome', 'richsalvucci', 'dd32', 'jobgaspersic', 'e1337geek' ),
 	),
 	'0.34.0-alpha.2' => array(
 		'project-leaders' => array( 'mauteri', 'patricia70' ),
