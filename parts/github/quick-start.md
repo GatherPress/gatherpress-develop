@@ -1,6 +1,6 @@
 ### Try it instantly
 
-Use the [Playground Environment](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/GatherPress/gatherpress/main/.wordpress-org/blueprints/blueprint.json) to test GatherPress with real data -- no setup required.
+Use the [Playground Environment](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/GatherPress/gatherpress/main/.wordpress-org/blueprints/blueprint-nightly.json) to test the latest GatherPress nightly build with real data -- no setup required.
 
 [Watch the intro demo](https://gatherpress.org/demovideo) | [Learn more about Playground](https://github.com/GatherPress/gatherpress/blob/main/docs/playground.md)
 
