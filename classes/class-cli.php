@@ -317,7 +317,7 @@ class Cli extends WP_CLI {
 		$output .= "![](.wordpress-org/banner-1544x500.jpg)\n\n";
 		$output .= '**' . trim( $this->read_part( 'shared/description.md' ) ) . "**\n\n";
 		$version_encoded = rawurlencode( $version );
-		$output         .= "[![Try it in WordPress Playground](https://img.shields.io/badge/Try_it-in_WordPress_Playground-blue?logo=wordpress&logoColor=%23fff&labelColor=%233858e9&color=%233858e9)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/GatherPress/gatherpress/main/.wordpress-org/blueprints/blueprint-nightly.json) ![Version](https://img.shields.io/static/v1?label=version&message={$version_encoded}&color=blue)\n\n";
+		$output         .= "[![Try it in WordPress Playground](https://img.shields.io/badge/Try_it-in_WordPress_Playground-blue?logo=wordpress&logoColor=%23fff&labelColor=%233858e9&color=%233858e9)](https://playground.wordpress.net/?blueprint-url=https://raw.githubusercontent.com/GatherPress/gatherpress/develop/.wordpress-org/blueprints/blueprint-nightly.json) ![Version](https://img.shields.io/static/v1?label=version&message={$version_encoded}&color=blue)\n\n";
 		$output       .= $this->read_part( 'github/badges.md' ) . "\n";
 		$output .= "## Screenshots\n\n";
 		$output .= $this->build_github_screenshots() . "\n";
